@@ -10,13 +10,51 @@ const productWrap = document.querySelector('.productWrap')
 const shoppingCartBody = document.querySelector('.shoppingCart-body')
 const total = document.querySelector('.total')
 const discardAllBtn = document.querySelector('.discardAllBtn')
+const orderInfoForm = document.querySelector('#form')
+
+const constraints = {
+  customerName: {
+    presence: {
+      message: ' 必填',
+    },
+  },
+  customerPhone: {
+    presence: {
+      message: ' 必填',
+    },
+  },
+  Email: {
+    presence: {
+      message: ' 必填',
+    },
+    email: true,
+  },
+  customerAddress: {
+    presence: {
+      message: ' 必填',
+    },
+  },
+  tradeWay: {
+    presence: {
+      message: ' 必填',
+    },
+  },
+}
+
+var errors = validate(orderInfoForm, constraints)
+console.log(errors)
 
 const state = {
   addCartsList: {},
   init() {
+    const that = this
     this.getProducts()
     this.getCart()
     discardAllBtn.addEventListener('click', this.DeleteCarts)
+    orderInfoForm.addEventListener('submit', function (e) {
+      e.preventDefault()
+      that.addOrder()
+    })
   },
   ProductTemplate(data) {
     return `<li class="productCard">
@@ -30,7 +68,8 @@ const state = {
     <p class="nowPrice">NT$${this.formatNumber(data.price)}</p>
   </li>`
   },
-  CartTemplate(data, quantity) {
+  CartTemplate(cartID, data, quantity) {
+    const price = data.price * quantity
     return ` <tr>
     <td>
       <div class="cardItem-title">
@@ -38,18 +77,18 @@ const state = {
         <p>${data.title}</p>
       </div>
     </td>
-    <td>NT$${this.formatNumber(data.origin_price)}</td>
-    <td>${quantity}</td>
     <td>NT$${this.formatNumber(data.price)}</td>
+    <td>${quantity}</td>
+    <td>NT$${this.formatNumber(price)}</td>
     <td class="discardBtn">
-      <a href="#" class="material-icons" data-id="${data.id}"> clear </a>
+      <a href="#" class="material-icons" data-id="${cartID}"> clear </a>
     </td>
   </tr>`
   },
   getProducts() {
     API.get('/products').then((res) => {
       const data = res.data.products
-      console.log(data)
+      // console.log(data)
       this.ProductsRender(data)
     })
   },
@@ -95,16 +134,31 @@ const state = {
     })
   },
   CartRender(data) {
+    console.log(data)
     let PriceTotal = 0
     shoppingCartBody.innerHTML = ''
     for (const item of data) {
-      PriceTotal += item.product.price
-      const dom = this.CartTemplate(item.product, item.quantity)
+      PriceTotal += item.product.price * item.quantity
+      const dom = this.CartTemplate(item.id, item.product, item.quantity)
       shoppingCartBody.insertAdjacentHTML('afterbegin', dom)
     }
     if (data.length > 0) total.textContent = this.formatNumber(PriceTotal)
     else total.textContent = 0
     // console.log(total)
+    this.bindDelCart()
+  },
+  bindDelCart() {
+    const that = this
+    const discardBtn = document.querySelectorAll('.discardBtn')
+    for (const btn of discardBtn) {
+      btn.addEventListener('click', function (e) {
+        const id = e.target.dataset.id
+        if (id !== undefined) {
+          e.preventDefault()
+          that.DeleteCart(id)
+        }
+      })
+    }
   },
   DeleteCarts(e) {
     e.preventDefault()
@@ -112,7 +166,36 @@ const state = {
       if (res.status) state.CartRender(res.data.carts)
     })
   },
-  DeleteCart(id) {},
+  DeleteCart(id) {
+    API.delete('/carts/' + id).then((res) => {
+      // console.log(res.data)
+      const data = res.data
+      if (data.status) {
+        this.CartRender(res.data.carts)
+      }
+    })
+  },
+  addOrder() {
+    let formData = new FormData(orderInfoForm)
+    // Display the key/value pairs
+    for (const [key, value] of formData) {
+      console.log(key + ', ' + value)
+    }
+
+    const data = {
+      data: {
+        user: {
+          name: formData.get('customerName'),
+          tel: formData.get('customerPhone'),
+          email: formData.get('Email'),
+          address: formData.get('customerAddress'),
+          payment: formData.get('tradeWay'),
+        },
+      },
+    }
+    console.log(data)
+    // API.post('​​/orders', data)
+  },
   formatNumber(num) {
     return numeral(num).format('0,0') // '1,000'
   },

@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.18/c3.css"
     />
@@ -431,7 +435,7 @@
     </section>
     <section class="orderInfo wrap" id="orderInfo">
       <h3 class="section-title">填寫預訂資料</h3>
-      <form action="" class="orderInfo-form">
+      <form id="form" class="orderInfo-form">
         <div class="orderInfo-formGroup">
           <label for="customerName" class="orderInfo-label">姓名</label>
           <div class="orderInfo-inputWrap">
@@ -440,7 +444,7 @@
               class="orderInfo-input"
               id="customerName"
               placeholder="請輸入姓名"
-              name="姓名"
+              name="customerName"
             />
             <p class="orderInfo-message" data-message="姓名">必填</p>
           </div>
@@ -453,7 +457,7 @@
               class="orderInfo-input"
               id="customerPhone"
               placeholder="請輸入電話"
-              name="電話"
+              name="customerPhone"
             />
             <p class="orderInfo-message" data-message="電話">必填</p>
           </div>
@@ -479,7 +483,7 @@
               class="orderInfo-input"
               id="customerAddress"
               placeholder="請輸入寄送地址"
-              name="寄送地址"
+              name="customerAddress"
             />
             <p class="orderInfo-message" data-message="寄送地址">必填</p>
           </div>
@@ -487,7 +491,7 @@
         <div class="orderInfo-formGroup">
           <label for="tradeWay" class="orderInfo-label">交易方式</label>
           <div class="orderInfo-inputWrap">
-            <select id="tradeWay" class="orderInfo-input" name="交易方式">
+            <select id="tradeWay" class="orderInfo-input" name="tradeWay">
               <option value="ATM" selected>ATM</option>
               <option value="信用卡">信用卡</option>
               <option value="超商付款">超商付款</option>
@@ -503,6 +507,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.18/c3.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/validate.js/0.13.1/validate.min.js"></script>
     <script src="app.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
