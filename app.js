@@ -12,6 +12,7 @@ const total = document.querySelector('.total')
 const discardAllBtn = document.querySelector('.discardAllBtn')
 const orderInfoForm = document.querySelector('#form')
 const productSelect = document.querySelector('.productSelect')
+const orderInfoMessage = document.querySelectorAll('.orderInfo-message')
 
 const constraints = {
   customerName: {
@@ -41,9 +42,6 @@ const constraints = {
     },
   },
 }
-
-var errors = validate(orderInfoForm, constraints)
-console.log(errors)
 
 const state = {
   data: null,
@@ -192,28 +190,74 @@ const state = {
     })
   },
   addOrder() {
-    let formData = new FormData(orderInfoForm)
-    // Display the key/value pairs
-    for (const [key, value] of formData) {
-      console.log(key + ', ' + value)
+    const errors = validate(orderInfoForm, constraints)
+    this.showErrorMessage(errors)
+    if (!errors) {
+      const formData = validate.collectFormValues(orderInfoForm)
+      const data = {
+        data: {
+          user: {
+            name: formData.customerName,
+            tel: formData.customerPhone,
+            email: formData.Email,
+            address: formData.customerAddress,
+            payment: formData.tradeWay,
+          },
+        },
+      }
+      API.post('/orders', data).then((res) => {
+        console.log(res.data)
+        const data = res.data
+        if (data.status) {
+          Swal.fire({
+            title: 'success!',
+            text: '送出訂單成功',
+            icon: 'success',
+            confirmButtonText: '太棒了',
+            // timer: 3000,
+            // timerProgressBar: true,
+            afterConfirm: () => {
+              location.reload()
+            },
+          })
+        } else {
+          Swal.fire({
+            title: 'Error!',
+            text: '送出訂單失敗',
+            icon: 'error',
+            confirmButtonText: '請重新嘗試',
+          })
+        }
+      })
     }
 
-    const data = {
-      data: {
-        user: {
-          name: formData.get('customerName'),
-          tel: formData.get('customerPhone'),
-          email: formData.get('Email'),
-          address: formData.get('customerAddress'),
-          payment: formData.get('tradeWay'),
-        },
-      },
-    }
-    console.log(data)
-    // API.post('​​/orders', data)
+    // console.log(formData)
+    // const data = {
+    //   data: {
+    //     user: {
+    //       name: formData.get('customerName'),
+    //       tel: formData.get('customerPhone'),
+    //       email: formData.get('Email'),
+    //       address: formData.get('customerAddress'),
+    //       payment: formData.get('tradeWay'),
+    //     },
+    //   },
+    // }
+    // console.log(data)
   },
   formatNumber(num) {
     return numeral(num).format('0,0') // '1,000'
+  },
+  showErrorMessage(errors) {
+    for (const item of orderInfoMessage) {
+      const ele = item.dataset.message
+      item.textContent = ''
+      if (errors) {
+        for (const [key, val] of Object.entries(errors)) {
+          if (key === ele) item.textContent = val
+        }
+      }
+    }
   },
 }
 
