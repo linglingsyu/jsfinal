@@ -11,6 +11,7 @@ const shoppingCartBody = document.querySelector('.shoppingCart-body')
 const total = document.querySelector('.total')
 const discardAllBtn = document.querySelector('.discardAllBtn')
 const orderInfoForm = document.querySelector('#form')
+const productSelect = document.querySelector('.productSelect')
 
 const constraints = {
   customerName: {
@@ -45,12 +46,14 @@ var errors = validate(orderInfoForm, constraints)
 console.log(errors)
 
 const state = {
+  data: null,
   addCartsList: {},
   init() {
     const that = this
-    this.getProducts()
-    this.getCart()
-    discardAllBtn.addEventListener('click', this.DeleteCarts)
+    that.getProducts()
+    that.getCart()
+    discardAllBtn.addEventListener('click', that.DeleteCarts)
+    productSelect.addEventListener('change', that.filterProducts)
     orderInfoForm.addEventListener('submit', function (e) {
       e.preventDefault()
       that.addOrder()
@@ -86,18 +89,31 @@ const state = {
   </tr>`
   },
   getProducts() {
+    // const that = this
     API.get('/products').then((res) => {
       const data = res.data.products
-      // console.log(data)
+      this.data = data
+      // console.log(this)
       this.ProductsRender(data)
     })
   },
   ProductsRender(data) {
+    productWrap.innerHTML = ''
     for (const item of data) {
       const dom = this.ProductTemplate(item)
       productWrap.insertAdjacentHTML('afterbegin', dom)
     }
     this.bindAddCart()
+  },
+  filterProducts() {
+    if (productSelect.value === '全部') {
+      state.ProductsRender(state.data)
+    } else {
+      const data = state.data.filter(
+        (item) => item.category === productSelect.value
+      )
+      state.ProductsRender(data)
+    }
   },
   bindAddCart() {
     const addCardBtn = document.querySelectorAll('.addCardBtn')
