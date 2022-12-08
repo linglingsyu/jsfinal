@@ -1,10 +1,11 @@
-const BASE_URL =
-  'https://livejs-api.hexschool.io/api/livejs/v1/customer/elsasyu'
+import { API } from './api.js'
+// const BASE_URL =
+//   'https://livejs-api.hexschool.io/api/livejs/v1/customer/elsasyu'
 
-const API = axios.create({
-  baseURL: BASE_URL,
-  headers: { 'Content-Type': 'application/json' },
-})
+// const API = axios.create({
+//   baseURL: BASE_URL,
+//   headers: { 'Content-Type': 'application/json' },
+// })
 
 const productWrap = document.querySelector('.productWrap')
 const shoppingCartBody = document.querySelector('.shoppingCart-body')
@@ -121,7 +122,7 @@ const state = {
         e.preventDefault()
         const id = e.target.dataset.id
         that.addCart(id)
-        console.log(e.target)
+        // console.log(e.target)
       })
     }
   },
@@ -148,7 +149,7 @@ const state = {
     })
   },
   CartRender(data) {
-    console.log(data)
+    // console.log(data)
     let PriceTotal = 0
     shoppingCartBody.innerHTML = ''
     for (const item of data) {
@@ -221,7 +222,7 @@ const state = {
         },
       }
       API.post('/orders', data).then((res) => {
-        console.log(res.data)
+        // console.log(res.data)
         const data = res.data
         if (data.status) {
           Swal.fire({

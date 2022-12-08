@@ -157,6 +157,21 @@ body {
   font-weight: bold;
 }
 
+.chartWrap{
+  display: flex;
+  justify-content: center;
+  align-items: center
+}
+
+.chartItem{
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+
 .wrap {
   max-width: 1110px;
   margin: 0 auto;
