@@ -88,7 +88,7 @@ const state = {
       Swal.fire({
         title: '訂單狀態已更新！',
         icon: 'success',
-        timer: 2000,
+        timer: 1200,
         timerProgressBar: true,
         html: '<strong></strong> 秒後關閉<br/><br/>',
         didOpen: () => {
