@@ -85,8 +85,21 @@ const state = {
     API.put('/orders', data).then((res) => {
       const response = res.data.orders
       console.log(response)
-      Swal.fire('訂單狀態已更新!', '', 'success')
-      this.RenderOrders(response)
+      Swal.fire({
+        title: '訂單狀態已更新！',
+        icon: 'success',
+        timer: 2000,
+        timerProgressBar: true,
+        html: '<strong></strong> 秒後關閉<br/><br/>',
+        didOpen: () => {
+          Swal.showLoading()
+          timerInterval = setInterval(() => {
+            Swal.getHtmlContainer().querySelector('strong').textContent =
+              (Swal.getTimerLeft() / 1000).toFixed(0)
+          }, 100)
+        },
+      }).then((res) => location.reload())
+      // this.RenderOrders(response)
     })
   },
   DeleteOrder(id) {
