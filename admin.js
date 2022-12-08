@@ -121,8 +121,21 @@ const state = {
         API.delete('/orders/' + id).then((res) => {
           const data = res.data
           if (data.status) {
-            Swal.fire('如你所願!', '已經刪除囉～', 'success')
-            this.RenderOrders(data.orders)
+            Swal.fire({
+              title: '訂單已刪除！',
+              icon: 'success',
+              timer: 1200,
+              timerProgressBar: true,
+              html: '<strong></strong> 秒後關閉<br/><br/>',
+              didOpen: () => {
+                Swal.showLoading()
+                timerInterval = setInterval(() => {
+                  Swal.getHtmlContainer().querySelector('strong').textContent =
+                    (Swal.getTimerLeft() / 1000).toFixed(0)
+                }, 100)
+              },
+            }).then((res) => location.reload())
+            // this.RenderOrders(data.orders)
           }
         })
       }
