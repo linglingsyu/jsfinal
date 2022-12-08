@@ -20,8 +20,12 @@ const state = {
     })
   },
   RenderOrders(data) {
-    orderPageBody.innerHTML =
-      '<tr><td colspan="8" style="text-align:center">目前沒有訂單唷~</td></tr>'
+    if (data.length === 0) {
+      orderPageBody.innerHTML =
+        '<tr><td colspan="8" style="text-align:center">目前沒有訂單唷~</td></tr>'
+    } else {
+      orderPageBody.innerHTML = ''
+    }
     for (const item of data) {
       const dom = this.OrderTemplate(item)
       orderPageBody.insertAdjacentHTML('afterbegin', dom)
@@ -94,8 +98,9 @@ const state = {
         didOpen: () => {
           Swal.showLoading()
           timerInterval = setInterval(() => {
-            Swal.getHtmlContainer().querySelector('strong').textContent =
-              (Swal.getTimerLeft() / 1000).toFixed(0)
+            Swal.getHtmlContainer().querySelector('strong').textContent = (
+              Swal.getTimerLeft() / 1000
+            ).toFixed(0)
           }, 100)
         },
       }).then((res) => location.reload())
