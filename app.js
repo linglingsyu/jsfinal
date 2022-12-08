@@ -176,8 +176,23 @@ const state = {
   },
   DeleteCarts(e) {
     e.preventDefault()
-    API.delete('/carts').then((res) => {
-      if (res.status) state.CartRender(res.data.carts)
+    Swal.fire({
+      title: 'Are you sure?',
+      text: '您將刪除所有品項',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '對，刪掉！',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        API.delete('/carts').then((res) => {
+          if (res.status) {
+            Swal.fire('如你所願!', '已經刪除囉～', 'success')
+            state.CartRender(res.data.carts)
+          }
+        })
+      }
     })
   },
   DeleteCart(id) {
@@ -216,10 +231,14 @@ const state = {
             confirmButtonText: '太棒了',
             // timer: 3000,
             // timerProgressBar: true,
-            afterConfirm: () => {
-              location.reload()
-            },
+            // afterConfirm: () => {
+            //   location.reload()
+            // },
           })
+
+          orderInfoForm.reset()
+          shoppingCartBody.innerHTML = ''
+          total.textContent = 0
         } else {
           Swal.fire({
             title: 'Error!',
