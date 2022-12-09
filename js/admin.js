@@ -186,12 +186,7 @@ const state = {
         data: {
           type: 'pie',
           columns: data,
-          order: null,
-          label: {
-            format: function (value, ratio, id) {
-              return value
-            },
-          },
+          order: null, // 取消chart的自動排序，讓圖表按資料的陣列順序排序
           // colors: {
           //   'Louvre 雙人床架': '#DACBFF',
           //   'Antony 雙人床架': '#9D7FEA',
@@ -199,6 +194,13 @@ const state = {
           //   其他: '#301E5F',
           // },
         },
+        // pie: {
+        //   label: {
+        //     format: function (value, ratio, id) {
+        //       return value // 圖表上顯示實際數值
+        //     },
+        //   },
+        // },
       })
     )
   },
