@@ -212,6 +212,7 @@ const state = {
     })
   },
   addOrder() {
+    if (this.CartList.length === 0 || !this.CartList) return false
     const errors = validate(orderInfoForm, constraints)
     this.showErrorMessage(errors)
     if (!errors) {
