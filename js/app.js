@@ -95,12 +95,17 @@ const state = {
   },
   getProducts() {
     // const that = this
-    API.get('/products').then((res) => {
-      const data = res.data.products
-      this.data = data
-      // console.log(this)
-      this.ProductsRender(data)
-    })
+    API.get('/products')
+      .then((res) => {
+        const data = res.data.products
+        this.data = data
+        // console.log(this)
+        this.ProductsRender(data)
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
   },
   ProductsRender(data) {
     productWrap.innerHTML = ''
@@ -161,16 +166,26 @@ const state = {
         quantity: parseInt(quantity),
       },
     }
-    API.post('/carts', data).then((res) => this.CartRender(res.data.carts))
+    API.post('/carts', data)
+      .then((res) => this.CartRender(res.data.carts))
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
     // console.log(this.addCartsList)
   },
   getCart() {
-    API.get('/carts').then((res) => {
-      const data = res.data.carts
-      this.CartList = data
-      this.CartRender(data)
-      // console.log(data)
-    })
+    API.get('/carts')
+      .then((res) => {
+        const data = res.data.carts
+        this.CartList = data
+        this.CartRender(data)
+        // console.log(data)
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
   },
   CartRender(data) {
     // console.log(data)
@@ -212,26 +227,36 @@ const state = {
       confirmButtonText: '對，刪掉！',
     }).then((result) => {
       if (result.isConfirmed) {
-        API.delete('/carts').then((res) => {
-          if (res.status) {
-            Swal.fire('如你所願!', '已經刪除囉～', 'success')
-            state.CartList = null
-            state.CartRender(res.data.carts)
-          }
-        })
+        API.delete('/carts')
+          .then((res) => {
+            if (res.status) {
+              Swal.fire('如你所願!', '已經刪除囉～', 'success')
+              state.CartList = null
+              state.CartRender(res.data.carts)
+            }
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error)
+          })
       }
     })
   },
   DeleteCart(id) {
-    API.delete('/carts/' + id).then((res) => {
-      // console.log(res.data)
-      const data = res.data
-      if (data.status) {
-        Swal.fire('如你所願!', '已經刪除囉～', 'success')
-        state.CartList = res.data.carts
-        this.CartRender(res.data.carts)
-      }
-    })
+    API.delete('/carts/' + id)
+      .then((res) => {
+        // console.log(res.data)
+        const data = res.data
+        if (data.status) {
+          Swal.fire('如你所願!', '已經刪除囉～', 'success')
+          state.CartList = res.data.carts
+          this.CartRender(res.data.carts)
+        }
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
   },
   addOrder() {
     if (this.CartList.length === 0 || !this.CartList) return false
@@ -250,37 +275,37 @@ const state = {
           },
         },
       }
-      API.post('/orders', data).then((res) => {
-        // console.log(res.data)
-        const data = res.data
-        if (data.status) {
-          Swal.fire({
-            title: 'success!',
-            text: '送出訂單成功',
-            icon: 'success',
-            confirmButtonText: '太棒了',
-            // timer: 3000,
-            // timerProgressBar: true,
-            // afterConfirm: () => {
-            //   location.reload()
-            // },
-          })
-          orderInfoForm.reset()
-          const cartNum = document.querySelectorAll('.cartNum')
-          for (const item of cartNum) {
-            item.value = 1
+      API.post('/orders', data)
+        .then((res) => {
+          // console.log(res.data)
+          const data = res.data
+          if (data.status) {
+            Swal.fire({
+              title: 'success!',
+              text: '送出訂單成功',
+              icon: 'success',
+              confirmButtonText: '太棒了',
+            })
+            orderInfoForm.reset()
+            const cartNum = document.querySelectorAll('.cartNum')
+            for (const item of cartNum) {
+              item.value = 1
+            }
+            shoppingCartBody.innerHTML = ''
+            total.textContent = 0
+          } else {
+            Swal.fire({
+              title: 'Error!',
+              text: '送出訂單失敗',
+              icon: 'error',
+              confirmButtonText: '請重新嘗試',
+            })
           }
-          shoppingCartBody.innerHTML = ''
-          total.textContent = 0
-        } else {
-          Swal.fire({
-            title: 'Error!',
-            text: '送出訂單失敗',
-            icon: 'error',
-            confirmButtonText: '請重新嘗試',
-          })
-        }
-      })
+        })
+        .catch(function (error) {
+          // handle error
+          console.log(error)
+        })
     }
   },
   formatNumber(num) {

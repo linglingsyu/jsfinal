@@ -13,11 +13,16 @@ const state = {
     discardAllBtn.addEventListener('click', that.DeleteCarts)
   },
   getOrders() {
-    API.get('/orders').then((res) => {
-      const data = res.data.orders
-      // console.log(data)
-      this.RenderOrders(data)
-    })
+    API.get('/orders')
+      .then((res) => {
+        const data = res.data.orders
+        // console.log(data)
+        this.RenderOrders(data)
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
   },
   RenderOrders(data) {
     if (data.length === 0) {
@@ -88,15 +93,20 @@ const state = {
   },
   updateOrderStatus(data) {
     console.log(data)
-    API.put('/orders', data).then((res) => {
-      const response = res.data.orders
-      console.log(response)
-      Swal.fire({
-        title: '訂單狀態已更新！',
-        icon: 'success',
+    API.put('/orders', data)
+      .then((res) => {
+        const response = res.data.orders
+        console.log(response)
+        Swal.fire({
+          title: '訂單狀態已更新！',
+          icon: 'success',
+        })
+        this.RenderOrders(response)
       })
-      this.RenderOrders(response)
-    })
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
   },
   DeleteOrder(id) {
     Swal.fire({
@@ -109,16 +119,21 @@ const state = {
       confirmButtonText: '對，刪掉！',
     }).then((result) => {
       if (result.isConfirmed) {
-        API.delete('/orders/' + id).then((res) => {
-          const data = res.data
-          if (data.status) {
-            Swal.fire({
-              title: '訂單已刪除！',
-              icon: 'success',
-            })
-            this.RenderOrders(data.orders)
-          }
-        })
+        API.delete('/orders/' + id)
+          .then((res) => {
+            const data = res.data
+            if (data.status) {
+              Swal.fire({
+                title: '訂單已刪除！',
+                icon: 'success',
+              })
+              this.RenderOrders(data.orders)
+            }
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error)
+          })
       }
     })
   },
@@ -134,15 +149,20 @@ const state = {
       confirmButtonText: '對，刪掉！',
     }).then((result) => {
       if (result.isConfirmed) {
-        API.delete('/orders').then((res) => {
-          if (res.status) {
-            Swal.fire({
-              title: '刪除成功！',
-              icon: 'success',
-            })
-            state.RenderOrders(res.data.orders)
-          }
-        })
+        API.delete('/orders')
+          .then((res) => {
+            if (res.status) {
+              Swal.fire({
+                title: '刪除成功！',
+                icon: 'success',
+              })
+              state.RenderOrders(res.data.orders)
+            }
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error)
+          })
       }
     })
   },
