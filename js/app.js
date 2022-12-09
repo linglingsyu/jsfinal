@@ -25,6 +25,10 @@ const constraints = {
     presence: {
       message: ' 必填',
     },
+    format: {
+      pattern: '[0-9]+', // 只能包含數字或英文字
+      message: 'can only contain 0-9',
+    },
   },
   Email: {
     presence: {
@@ -259,6 +263,7 @@ const state = {
       })
   },
   addOrder() {
+    // console.log(this.CartList)
     if (this.CartList.length === 0 || !this.CartList) return false
     const errors = validate(orderInfoForm, constraints)
     this.showErrorMessage(errors)
