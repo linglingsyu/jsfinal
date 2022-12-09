@@ -25,9 +25,13 @@ const constraints = {
     presence: {
       message: ' 必填',
     },
+    length: {
+      minimum: 8, // 輸入值不能短於此值
+      message: '至少需要8碼',
+    },
     format: {
       pattern: '[0-9]+', // 只能包含數字或英文字
-      message: 'can only contain 0-9',
+      message: '只能為數字',
     },
   },
   Email: {
@@ -50,7 +54,6 @@ const constraints = {
 
 const state = {
   data: null,
-  addCartsList: {},
   CartList: null,
   init() {
     const that = this
@@ -158,11 +161,6 @@ const state = {
     }
   },
   addCart(id) {
-    // if (!this.addCartsList[id]) {
-    //   this.addCartsList[id] = 1
-    // } else {
-    //   this.addCartsList[id]++
-    // }
     const quantity = document.querySelector(`.quantity${id}`).value
     const data = {
       data: {
@@ -176,7 +174,6 @@ const state = {
         // handle error
         console.log(error)
       })
-    // console.log(this.addCartsList)
   },
   getCart() {
     API.get('/carts')
