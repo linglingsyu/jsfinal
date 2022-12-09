@@ -47,6 +47,7 @@ const constraints = {
 const state = {
   data: null,
   addCartsList: {},
+  CartList: null,
   init() {
     const that = this
     that.getProducts()
@@ -144,6 +145,7 @@ const state = {
   getCart() {
     API.get('/carts').then((res) => {
       const data = res.data.carts
+      this.CartList = data
       this.CartRender(data)
       // console.log(data)
     })
@@ -177,6 +179,7 @@ const state = {
   },
   DeleteCarts(e) {
     e.preventDefault()
+    if (state.CartList.length === 0 || !state.CartList) return false
     Swal.fire({
       title: 'Are you sure?',
       text: '您將刪除所有品項',
@@ -190,6 +193,7 @@ const state = {
         API.delete('/carts').then((res) => {
           if (res.status) {
             Swal.fire('如你所願!', '已經刪除囉～', 'success')
+            state.CartList = null
             state.CartRender(res.data.carts)
           }
         })
@@ -201,6 +205,8 @@ const state = {
       // console.log(res.data)
       const data = res.data
       if (data.status) {
+        Swal.fire('如你所願!', '已經刪除囉～', 'success')
+        state.CartList = res.data.carts
         this.CartRender(res.data.carts)
       }
     })
