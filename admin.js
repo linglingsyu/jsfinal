@@ -32,12 +32,13 @@ const state = {
     }
     this.bindEvent()
 
+    this.categoryData = []
     const categoryData = data.reduce((prev, current) => {
       for (const item of current.products) {
         if (!prev[item.category]) {
           prev[item.category] = 0
         }
-        prev[item.category] += item.quantity
+        prev[item.category] += item.quantity * item.price
       }
       return prev
     }, {})
@@ -48,12 +49,13 @@ const state = {
       this.categoryData.push(tmp)
     }
 
+    this.itemData = []
     const itemData = data.reduce((prev, current) => {
       for (const item of current.products) {
         if (!prev[item.title]) {
           prev[item.title] = 0
         }
-        prev[item.title] += item.quantity
+        prev[item.title] += item.quantity * item.price
       }
       // console.log(current)
       return prev
@@ -92,19 +94,8 @@ const state = {
       Swal.fire({
         title: '訂單狀態已更新！',
         icon: 'success',
-        timer: 1200,
-        timerProgressBar: true,
-        html: '<strong></strong> 秒後關閉<br/><br/>',
-        didOpen: () => {
-          Swal.showLoading()
-          timerInterval = setInterval(() => {
-            Swal.getHtmlContainer().querySelector('strong').textContent = (
-              Swal.getTimerLeft() / 1000
-            ).toFixed(0)
-          }, 100)
-        },
-      }).then((res) => location.reload())
-      // this.RenderOrders(response)
+      })
+      this.RenderOrders(response)
     })
   },
   DeleteOrder(id) {
@@ -124,18 +115,8 @@ const state = {
             Swal.fire({
               title: '訂單已刪除！',
               icon: 'success',
-              timer: 1200,
-              timerProgressBar: true,
-              html: '<strong></strong> 秒後關閉<br/><br/>',
-              didOpen: () => {
-                Swal.showLoading()
-                timerInterval = setInterval(() => {
-                  Swal.getHtmlContainer().querySelector('strong').textContent =
-                    (Swal.getTimerLeft() / 1000).toFixed(0)
-                }, 100)
-              },
-            }).then((res) => location.reload())
-            // this.RenderOrders(data.orders)
+            })
+            this.RenderOrders(data.orders)
           }
         })
       }
@@ -158,18 +139,8 @@ const state = {
             Swal.fire({
               title: '刪除成功！',
               icon: 'success',
-              timer: 2000,
-              timerProgressBar: true,
-              html: 'I will close in <strong></strong> seconds.<br/><br/>',
-              didOpen: () => {
-                Swal.showLoading()
-                timerInterval = setInterval(() => {
-                  Swal.getHtmlContainer().querySelector('strong').textContent =
-                    (Swal.getTimerLeft() / 1000).toFixed(0)
-                }, 100)
-              },
-            }).then((res) => location.reload())
-            // state.RenderOrders(res.data.orders)
+            })
+            state.RenderOrders(res.data.orders)
           }
         })
       }
@@ -208,6 +179,7 @@ const state = {
   },
   initChart(ele, data) {
     // C3.js
+    this.chart = []
     this.chart.push(
       c3.generate({
         bindto: ele, // HTML 元素綁定
@@ -215,6 +187,11 @@ const state = {
           type: 'pie',
           columns: data,
           order: null,
+          label: {
+            format: function (value, ratio, id) {
+              return value
+            },
+          },
           // colors: {
           //   'Louvre 雙人床架': '#DACBFF',
           //   'Antony 雙人床架': '#9D7FEA',
