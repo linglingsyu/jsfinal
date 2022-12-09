@@ -65,6 +65,11 @@ const state = {
     <img
       src="${data.images}"
     />
+    <div class="cartNumBtn">
+      <button class="numControl"  data-action="-" >-</button>
+      <input type="number" min="1" value="1" class="quantity${data.id} cartNum">
+      <button class="numControl"  data-action="+" >+</button>
+    </div>
     <a href="#" class="addCardBtn" data-id="${data.id}">加入購物車</a>
     <h3>${data.title}</h3>
     <del class="originPrice">NT$${this.formatNumber(data.origin_price)}</del>
@@ -116,6 +121,23 @@ const state = {
     }
   },
   bindAddCart() {
+    const CartNumBtn = document.querySelectorAll('.cartNumBtn')
+    for (const item of CartNumBtn) {
+      let input = item.children[1]
+      item.addEventListener('click', function (e) {
+        e.preventDefault()
+        const action = e.target.dataset.action
+        let val = parseInt(input.value)
+        if (action === '-') {
+          if (val > 1) {
+            input.value = val -= 1
+          }
+        } else if (action === '+') {
+          input.value = val += 1
+        }
+      })
+    }
+
     const addCardBtn = document.querySelectorAll('.addCardBtn')
     const that = this
     for (const item of addCardBtn) {
@@ -123,20 +145,20 @@ const state = {
         e.preventDefault()
         const id = e.target.dataset.id
         that.addCart(id)
-        // console.log(e.target)
       })
     }
   },
   addCart(id) {
-    if (!this.addCartsList[id]) {
-      this.addCartsList[id] = 1
-    } else {
-      this.addCartsList[id]++
-    }
+    // if (!this.addCartsList[id]) {
+    //   this.addCartsList[id] = 1
+    // } else {
+    //   this.addCartsList[id]++
+    // }
+    const quantity = document.querySelector(`.quantity${id}`).value
     const data = {
       data: {
         productId: id,
-        quantity: this.addCartsList[id],
+        quantity: parseInt(quantity),
       },
     }
     API.post('/carts', data).then((res) => this.CartRender(res.data.carts))
@@ -243,8 +265,11 @@ const state = {
             //   location.reload()
             // },
           })
-
           orderInfoForm.reset()
+          const cartNum = document.querySelectorAll('.cartNum')
+          for (const item of cartNum) {
+            item.value = 1
+          }
           shoppingCartBody.innerHTML = ''
           total.textContent = 0
         } else {
@@ -257,20 +282,6 @@ const state = {
         }
       })
     }
-
-    // console.log(formData)
-    // const data = {
-    //   data: {
-    //     user: {
-    //       name: formData.get('customerName'),
-    //       tel: formData.get('customerPhone'),
-    //       email: formData.get('Email'),
-    //       address: formData.get('customerAddress'),
-    //       payment: formData.get('tradeWay'),
-    //     },
-    //   },
-    // }
-    // console.log(data)
   },
   formatNumber(num) {
     return numeral(num).format('0,0') // '1,000'
